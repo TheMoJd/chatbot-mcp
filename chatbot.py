@@ -65,8 +65,6 @@ def search_papers(topic: str, max_results: int = 5) -> List[str]:
 
     return paper_ids
 
-search_papers("computers")
-
 # The second tool looks for information about a specific paper across all topic directories inside the `papers` directory.
 
 def extract_info(paper_id: str) -> str:
@@ -95,8 +93,6 @@ def extract_info(paper_id: str) -> str:
                     continue
 
     return f"There's no saved information related to paper {paper_id}."
-
-extract_info('1310.7911v2')
 
 # ## Tool Schema
 
@@ -176,13 +172,24 @@ client = anthropic.Anthropic()
 # ### Query Processing
 
 def process_query(query):
+    """
+    Traite une requête utilisateur en interagissant avec un modèle de langage et des outils externes.
+    Args:
+        query (str): La requête de l'utilisateur à traiter.
+    Fonctionnement :
+        - Envoie la requête utilisateur au modèle de langage spécifié.
+        - Gère les réponses du modèle, qui peuvent être du texte ou des demandes d'utilisation d'outils.
+        - Si le modèle demande l'utilisation d'un outil, exécute l'outil correspondant avec les arguments fournis.
+        - Ajoute le résultat de l'outil à la conversation et continue jusqu'à ce qu'une réponse textuelle finale soit obtenue.
+        - Affiche les réponses textuelles du modèle et les appels d'outils effectués.
+    """
 
     messages = [{'role': 'user', 'content': query}]
-
     response = client.messages.create(max_tokens = 2024,
                                   model = 'claude-3-7-sonnet-20250219',
                                   tools = tools,
                                   messages = messages)
+    print("reponse: ", response)
 
     process_query = True
     while process_query:
